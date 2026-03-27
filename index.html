@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Noodle Chaos 3000 Menu</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .menu-shell {
+        width: min(860px, 95vw);
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .menu-card {
+        background: var(--panel);
+        border: 2px solid var(--panel-edge);
+        box-shadow:
+          inset 0 0 0 1px rgba(115, 197, 227, 0.24),
+          0 0 0 1px rgba(111, 191, 220, 0.32),
+          0 10px 24px rgba(37, 109, 141, 0.16);
+        padding: 14px;
+      }
+
+      .menu-row {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .menu-row label {
+        font-family: "Press Start 2P", monospace;
+        font-size: 0.52rem;
+        letter-spacing: 0.08em;
+        color: var(--accent-gold);
+        text-transform: uppercase;
+      }
+
+      .menu-input,
+      .menu-select {
+        border: 1px solid var(--accent-cyan-deep);
+        background: rgba(255, 255, 255, 0.86);
+        color: var(--ink);
+        font-family: "VT323", monospace;
+        font-size: 1.05rem;
+        padding: 7px 8px;
+        outline: none;
+      }
+
+      .menu-input:focus,
+      .menu-select:focus {
+        border-color: var(--accent-cyan);
+        box-shadow: 0 0 0 1px rgba(52, 213, 255, 0.35);
+      }
+
+      .menu-preview-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 8px;
+      }
+
+      .menu-preview-card {
+        border: 1px solid var(--accent-cyan-deep);
+        background: rgba(255, 255, 255, 0.68);
+        color: var(--ink);
+        font-family: "VT323", monospace;
+        font-size: 0.92rem;
+        padding: 7px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .menu-preview-card.active {
+        border-color: var(--accent-cyan);
+        box-shadow: 0 0 0 1px rgba(52, 213, 255, 0.3);
+      }
+
+      .menu-preview-track {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 3px;
+      }
+
+      .menu-preview-seg {
+        width: 11px;
+        height: 11px;
+        border-radius: 2px;
+      }
+
+      .menu-actions {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 4px;
+        flex-wrap: wrap;
+      }
+
+      .menu-note {
+        text-align: center;
+        color: #4e7f92;
+        font-size: 0.95rem;
+      }
+
+      @media (max-width: 700px) {
+        .menu-row {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>NOODLE CHAOS 3000</h1>
+    <div class="subtitle">MAIN MENU • NAME, SNAKE, MODE, THEN CHAOS</div>
+
+    <div class="menu-shell">
+      <div class="menu-card">
+        <div class="menu-row">
+          <label for="playerName">Pilot Name</label>
+          <input id="playerName" class="menu-input" maxlength="18" placeholder="Space Potato" value="Space Potato" />
+        </div>
+
+        <div class="menu-row">
+          <label for="snakePreset">Snake</label>
+          <select id="snakePreset" class="menu-select"></select>
+        </div>
+
+        <div class="menu-preview-list" id="menuPreviewList"></div>
+      </div>
+
+      <div class="menu-card">
+        <div class="menu-row">
+          <label for="modeSelect">Mode</label>
+          <select id="modeSelect" class="menu-select">
+            <option value="manual">Classic Manual</option>
+            <option value="auto">Auto Pilot Showcase</option>
+          </select>
+        </div>
+
+        <div class="menu-row">
+          <label for="speedSelect">Pace</label>
+          <select id="speedSelect" class="menu-select">
+            <option value="0">Cruise</option>
+            <option value="1" selected>Arcade</option>
+            <option value="2">Turbo</option>
+            <option value="3">Hyper</option>
+          </select>
+        </div>
+
+        <div class="menu-note">Settings are applied when game page opens.</div>
+      </div>
+
+      <div class="menu-actions">
+        <button class="btn" id="playBtn">▶ START RUN</button>
+      </div>
+    </div>
+
+    <script>
+      const MENU_SETTINGS_KEY = "noodleChaos.menuSettings";
+
+      const presets = [
+        { id: "plasma-pickle", name: "Plasma Pickle", head: "#1ea3d6", glow: "#1ea3d6", bodyStart: "#8edff5", bodyEnd: "#5fb7d8", smiley: false },
+        { id: "nacho-ninja", name: "Nacho Ninja", head: "#ff8a00", glow: "#ff8a00", bodyStart: "#ffd16a", bodyEnd: "#ffac37", smiley: false },
+        { id: "mint-disaster", name: "Mint Disaster", head: "#20b877", glow: "#20b877", bodyStart: "#95f0ce", bodyEnd: "#4ecf98", smiley: false },
+        { id: "captain-smirk", name: "Captain Smirk", head: "#f54291", glow: "#f54291", bodyStart: "#ffb4d6", bodyEnd: "#ff78b5", smiley: true },
+        { id: "void-noodle", name: "Void Noodle", head: "#7f6bff", glow: "#7f6bff", bodyStart: "#ccc4ff", bodyEnd: "#9b8cff", smiley: false },
+      ];
+
+      function hexToRgb(hex) {
+        const clean = hex.replace("#", "");
+        const num = Number.parseInt(clean, 16);
+        return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+      }
+
+      function lerpColorHex(a, b, t) {
+        const ca = hexToRgb(a);
+        const cb = hexToRgb(b);
+        const r = Math.round(ca.r + (cb.r - ca.r) * t);
+        const g = Math.round(ca.g + (cb.g - ca.g) * t);
+        const bl = Math.round(ca.b + (cb.b - ca.b) * t);
+        return `rgb(${r},${g},${bl})`;
+      }
+
+      function sanitizePlayerName(raw) {
+        const compact = (raw || "").replace(/\s+/g, " ").trim();
+        if (!compact) return "Space Potato";
+        return compact.slice(0, 18);
+      }
+
+      function renderPreviewCards(selectedId) {
+        const host = document.getElementById("menuPreviewList");
+        host.innerHTML = presets
+          .map((p) => {
+            const s0 = lerpColorHex(p.bodyStart, p.bodyEnd, 0.25);
+            const s1 = lerpColorHex(p.bodyStart, p.bodyEnd, 0.6);
+            const s2 = lerpColorHex(p.bodyStart, p.bodyEnd, 0.95);
+            const face = p.smiley ? " :)" : "";
+            return `
+              <div class="menu-preview-card${p.id === selectedId ? " active" : ""}" data-skin-id="${p.id}">
+                <div class="menu-preview-track">
+                  <span class="menu-preview-seg" style="background:${s0}"></span>
+                  <span class="menu-preview-seg" style="background:${s1}"></span>
+                  <span class="menu-preview-seg" style="background:${s2}"></span>
+                  <span class="menu-preview-seg" style="background:${p.head}; box-shadow:0 0 6px ${p.glow}"></span>
+                </div>
+                <div>${p.name}${face}</div>
+              </div>`;
+          })
+          .join("");
+
+        host.querySelectorAll(".menu-preview-card").forEach((card) => {
+          card.addEventListener("click", () => {
+            const id = card.getAttribute("data-skin-id");
+            document.getElementById("snakePreset").value = id;
+            renderPreviewCards(id);
+          });
+        });
+      }
+
+      function loadSavedSettings() {
+        try {
+          const raw = localStorage.getItem(MENU_SETTINGS_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function saveAndStart() {
+        const playerName = sanitizePlayerName(document.getElementById("playerName").value);
+        const snakePresetId = document.getElementById("snakePreset").value;
+        const mode = document.getElementById("modeSelect").value;
+        const speedIdx = Number.parseInt(document.getElementById("speedSelect").value, 10);
+
+        const payload = {
+          playerName,
+          snakePresetId,
+          mode,
+          speedIdx: Number.isInteger(speedIdx) ? speedIdx : 1,
+          autoPlay: mode === "auto",
+        };
+
+        localStorage.setItem(MENU_SETTINGS_KEY, JSON.stringify(payload));
+        window.location.href = "game.html";
+      }
+
+      function initMenu() {
+        const snakeSelect = document.getElementById("snakePreset");
+        snakeSelect.innerHTML = presets.map((p) => `<option value="${p.id}">${p.name}</option>`).join("");
+
+        const saved = loadSavedSettings();
+        if (saved?.playerName) document.getElementById("playerName").value = saved.playerName;
+        if (saved?.snakePresetId) snakeSelect.value = saved.snakePresetId;
+        if (saved?.mode) document.getElementById("modeSelect").value = saved.mode;
+        if (Number.isInteger(saved?.speedIdx)) {
+          document.getElementById("speedSelect").value = String(Math.max(0, Math.min(3, saved.speedIdx)));
+        }
+
+        renderPreviewCards(snakeSelect.value || presets[0].id);
+
+        snakeSelect.addEventListener("change", (e) => {
+          renderPreviewCards(e.target.value);
+        });
+
+        document.getElementById("playerName").addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            saveAndStart();
+          }
+        });
+
+        document.getElementById("playBtn").addEventListener("click", saveAndStart);
+      }
+
+      initMenu();
+    </script>
+  </body>
+</html>
