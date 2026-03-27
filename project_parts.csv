@@ -1,0 +1,8 @@
+Part,File,Type,Purpose
+UI Markup,game.html,HTML,Main layout and panel/canvas structure
+Styling,styles.css,CSS,Theme variables layout controls effects and responsive visuals
+Config,js/config.js,JavaScript,Canvas size constants and speed presets
+Audio,js/audio.js,JavaScript,Retro sound generation and mute toggle
+Data Structures and Algorithms,js/algorithms.js,JavaScript,Deque HashSet MinHeap Fisher-Yates BFS Greedy helpers
+Core Game Logic,js/game.js,JavaScript,State management autoplay item spawn tick loop collisions render and UI updates
+Input and Bootstrap,js/input.js,JavaScript,Keyboard controls hotkeys and first render setup
