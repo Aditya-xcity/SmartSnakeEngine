@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NOODLE CHAOS 3000</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>NOODLE CHAOS 3000</h1>
+    <div class="subtitle">ARENA MODE • CONFIGURED FROM MAIN MENU</div>
+
+    <div class="game-wrapper">
+      <div class="side-panel">
+        <div class="panel-box">
+          <div class="panel-label">Score</div>
+          <div class="panel-value" id="scoreVal">0</div>
+        </div>
+        <div class="panel-box">
+          <div class="panel-label">Length</div>
+          <div class="panel-value" id="lengthVal">3</div>
+        </div>
+        <div class="panel-box">
+          <div class="panel-label">Level</div>
+          <div class="panel-value" id="levelVal">1</div>
+        </div>
+        <div class="panel-box">
+          <div class="panel-label">Pilot</div>
+          <div class="panel-value" id="playerNameVal" style="font-size: 0.66rem; line-height: 1.4">
+            SPACE POTATO
+          </div>
+        </div>
+        <div class="panel-box">
+          <div class="panel-label">Snake Profile</div>
+          <div class="panel-value" id="snakeNameVal" style="font-size: 0.66rem; line-height: 1.4">
+            Plasma Pickle
+          </div>
+        </div>
+        <div class="panel-box">
+          <div class="panel-label">DAA Algorithms</div>
+          <ul class="algo-list" id="algoList">
+            <li id="a-deque">Deque (Snake Trail)</li>
+            <li id="a-hash">Hash Set (Hit Detect)</li>
+            <li id="a-fisher">Fisher-Yates (Orb Spawn)</li>
+            <li id="a-bfs">BFS (Hint Radar)</li>
+            <li id="a-greedy">Greedy (Auto Pilot)</li>
+            <li id="a-pq">Priority Queue (Decay)</li>
+          </ul>
+        </div>
+        <div class="panel-box">
+          <div class="panel-label">Legend</div>
+          <div class="legend">
+            <div class="legend-item">
+              <div class="dot dot-head"></div>
+              <span>Snake Head</span>
+            </div>
+            <div class="legend-item">
+              <div class="dot dot-reward"></div>
+              <span>Red Orb +10pts</span>
+            </div>
+            <div class="legend-item">
+              <div class="dot dot-poison"></div>
+              <span>Glitch Mine = Death</span>
+            </div>
+            <div class="legend-item">
+              <div class="dot dot-herb"></div>
+              <span>Yellow Herb = Clears Mines</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="canvas"></canvas>
+        <div class="overlay" id="overlay" style="display: none">
+          <div class="overlay-title" id="overlayTitle">RUN TERMINATED</div>
+          <div class="overlay-score" id="overlayScore">Score: 0</div>
+          <button class="btn" onclick="startGame()">▶ RESTART RUN</button>
+          <button class="btn" onclick="goToMainMenu()">◀ MAIN MENU</button>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="panel-box">
+          <div class="panel-label">Last Operation</div>
+          <div
+            id="lastOp"
+            style="
+              font-size: 0.62rem;
+              color: var(--green);
+              line-height: 1.6;
+              margin-top: 4px;
+            "
+          >
+            —
+          </div>
+          <div class="complexity-box" id="complexityBox"></div>
+        </div>
+        <div class="panel-box">
+          <div class="panel-label">Runtime Log</div>
+        </div>
+        <div class="daa-log" id="daaLog"></div>
+        <div class="controls panel-box">
+          <div class="panel-label">Controls</div>
+          <span class="key">W</span> / <span class="key">↑</span> Up<br />
+          <span class="key">S</span> / <span class="key">↓</span> Down<br />
+          <span class="key">A</span> / <span class="key">←</span> Left<br />
+          <span class="key">D</span> / <span class="key">→</span> Right<br />
+          <span class="key">P</span> Pause<br />
+          <span class="key">H</span> AI Hint<br />
+          <span class="key">T</span> Auto Play<br />
+          <span class="key">M</span> Mute
+          <div id="autoState" style="margin-top: 6px; color: #60cc88">AUTO: OFF</div>
+          <button id="soundToggle" onclick="toggleSound()">
+            <span id="soundIcon">🔊</span> SOUND ON
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/algorithms.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/input.js"></script>
+  </body>
+</html>
